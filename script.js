@@ -61,6 +61,9 @@ let questions = [
 let currentQuestion = 0;
 let rightQuestions = 0;
 
+let AUDIO_SUCCESS = new Audio('audio/succes.mp3');
+let AUDIO_FAILURE = new Audio('audio/fail.mp3');
+
 function init() {
   let amountQuestions = document.getElementById('amountQuestions');
   amountQuestions.innerHTML = '';
@@ -69,30 +72,44 @@ function init() {
 }
 
 function showQuestion() {
-  let question = questions[currentQuestion];
-    let percent = currentQuestion / questions.length * 100;
-    percent = `${percent.toFixed(0)}%`;
-  if (currentQuestion >= questions.length) {
-    document.getElementById('endScreen').style = '';
-    document.getElementById('questionBody').style.display = 'none';
-    document.getElementById('rightQuestions').innerHTML = rightQuestions;
-    document.getElementById('completeQuestions').innerHTML = questions.length;
-    document.getElementById('progressBar').style.width = '100%';
-    document.getElementById('progressBar').innerHTML = '100%';
-  } else {
-    
 
-    
-    console.log(percent)
-    document.getElementById('progressBar').style.width = percent;
-    document.getElementById('progressBar').innerHTML = percent;
-    document.getElementById('questiontext').innerHTML = question['question'];
-    document.getElementById('answer_1').innerHTML = question['answer_1'];
-    document.getElementById('answer_2').innerHTML = question['answer_2'];
-    document.getElementById('answer_3').innerHTML = question['answer_3'];
-    document.getElementById('answer_4').innerHTML = question['answer_4'];
-    document.getElementById('currentQuestionNumber').innerHTML = currentQuestion + 1;
+  if (gameIsOver()) {
+    showEndScreen();
+
+  } else {
+    updateProgressBar();
+    updateToNextQuestion();
+
   }
+}
+
+function gameIsOver() {
+  return currentQuestion >= questions.length;
+}
+
+function showEndScreen() {
+  document.getElementById('endScreen').style = '';
+  document.getElementById('questionBody').style.display = 'none';
+  document.getElementById('rightQuestions').innerHTML = rightQuestions;
+  document.getElementById('completeQuestions').innerHTML = questions.length;
+}
+
+function updateProgressBar() {
+  let percent = Math.round((currentQuestion + 1) / questions.length * 100);
+  percent = `${percent}%`;
+  document.getElementById('progressBar').style.width = percent;
+  document.getElementById('progressBar').innerHTML = percent;
+}
+
+function updateToNextQuestion() {
+  let question = questions[currentQuestion];
+
+  document.getElementById('questiontext').innerHTML = question['question'];
+  document.getElementById('answer_1').innerHTML = question['answer_1'];
+  document.getElementById('answer_2').innerHTML = question['answer_2'];
+  document.getElementById('answer_3').innerHTML = question['answer_3'];
+  document.getElementById('answer_4').innerHTML = question['answer_4'];
+  document.getElementById('currentQuestionNumber').innerHTML = currentQuestion + 1;
 }
 
 function answer(selection) {
@@ -100,14 +117,20 @@ function answer(selection) {
   let selectedQuestionNumber = selection.slice(-1);
 
   let idOfRightAnswer = `answer_${question['right_answer']}`;
-  if (selectedQuestionNumber == question['right_answer']) {
+  if (rightAnswerSelected(selectedQuestionNumber, question)) {
     document.getElementById(selection).parentNode.classList.add('bg-success')
+    AUDIO_SUCCESS.play();
     rightQuestions++;
   } else {
     document.getElementById(selection).parentNode.classList.add('bg-danger');
     document.getElementById(idOfRightAnswer).parentNode.classList.add('bg-success');
+    AUDIO_FAILURE.play();
   }
   document.getElementById('nextButton').disabled = false;
+}
+
+function rightAnswerSelected(selectedQuestionNumber, question) {
+  return selectedQuestionNumber == question['right_answer']
 }
 
 function nextQuestion() {
@@ -125,3 +148,10 @@ function resetAnswerButtons() {
   }
 }
 
+function restartGame() {
+  rightQuestions = 0;
+  currentQuestion = 0;
+  document.getElementById('endScreen').style.display = 'none';
+  document.getElementById('questionBody').style.display = '';
+  init();
+}
