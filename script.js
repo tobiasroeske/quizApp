@@ -69,14 +69,23 @@ function init() {
 }
 
 function showQuestion() {
-
+  let question = questions[currentQuestion];
+    let percent = currentQuestion / questions.length * 100;
+    percent = `${percent.toFixed(0)}%`;
   if (currentQuestion >= questions.length) {
     document.getElementById('endScreen').style = '';
     document.getElementById('questionBody').style.display = 'none';
     document.getElementById('rightQuestions').innerHTML = rightQuestions;
     document.getElementById('completeQuestions').innerHTML = questions.length;
+    document.getElementById('progressBar').style.width = '100%';
+    document.getElementById('progressBar').innerHTML = '100%';
   } else {
-    let question = questions[currentQuestion];
+    
+
+    
+    console.log(percent)
+    document.getElementById('progressBar').style.width = percent;
+    document.getElementById('progressBar').innerHTML = percent;
     document.getElementById('questiontext').innerHTML = question['question'];
     document.getElementById('answer_1').innerHTML = question['answer_1'];
     document.getElementById('answer_2').innerHTML = question['answer_2'];

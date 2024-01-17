@@ -32,7 +32,8 @@ body {
     background-color: rgba(0, 0, 0, 0.05);
 }
 
-.bg-success, .bg-danger {
+.bg-success,
+.bg-danger {
     color: white;
 }
 
@@ -42,4 +43,9 @@ body {
 
 .text-center {
     text-align: center;
+}
+
+.final-headline {
+    font-size: 38px;
+    margin-bottom: 32px;
 }
